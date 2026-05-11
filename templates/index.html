@@ -497,10 +497,12 @@ async function submitRequest() {
       document.getElementById('successScreen').style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      alert('오류가 발생했습니다. / An error occurred.');
+      console.error('Server error:', data);
+      alert('서버 오류 / Server error: ' + (data.error || JSON.stringify(data)));
     }
   } catch(e) {
-    alert('오류가 발생했습니다. / An error occurred.');
+    console.error('Submit error:', e);
+    alert('오류가 발생했습니다. / An error occurred.\n\n' + e.message);
   }
   btn.disabled = false;
 }
