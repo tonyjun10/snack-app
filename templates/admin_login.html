@@ -9,7 +9,7 @@
   <style>
     :root {
       --bg: #f7f6f2; --surface: #fff; --border: #e5e2d9;
-      --accent: #ff5c35; --text: #1a1814; --text-muted: #7a7670;
+      --accent: #111111; --text: #1a1814; --text-muted: #7a7670;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -33,7 +33,7 @@
       font-family: 'Space Mono', monospace;
       font-weight: 700;
       font-size: 0.85rem;
-      color: var(--accent);
+      color: var(--text);
       letter-spacing: 0.05em;
       margin-bottom: 0.5rem;
     }
@@ -74,7 +74,7 @@
       cursor: pointer;
       transition: background 0.15s;
     }
-    .btn-login:hover { background: var(--accent); border-color: var(--accent); }
+    .btn-login:hover { background: #333; border-color: #333; }
     .error-msg {
       background: #fff1f0;
       border: 2px solid #ffa39e;
