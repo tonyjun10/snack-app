@@ -12,12 +12,7 @@
   line-height: 1.2;
   margin-bottom: 0.6rem;
 }
-.hero p {
-  color: var(--text-muted);
-  font-size: 1rem;
-  max-width: 480px;
-  margin: 0 auto;
-}
+.hero p { color: var(--text-muted); font-size: 1rem; max-width: 480px; margin: 0 auto; }
 
 .step-card {
   background: var(--surface);
@@ -39,23 +34,15 @@
   align-items: center;
   gap: 0.5rem;
 }
-.step-num::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
+.step-num::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-.search-row {
-  display: flex;
-  gap: 0.75rem;
-}
+.search-row { display: flex; gap: 0.75rem; }
 .search-row .form-input { flex: 1; }
 
 /* Product grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1rem;
   margin-top: 1.25rem;
 }
@@ -68,133 +55,138 @@
   transition: all 0.18s;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
-.product-card:hover {
-  border-color: var(--text);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-.product-card.selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft), 0 4px 16px rgba(255,92,53,0.15);
-}
-.product-img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: contain;
-  background: var(--bg);
-  padding: 0.5rem;
-}
-.product-body {
-  padding: 0.75rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-.product-name {
-  font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 1.35;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.product-brand {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-.product-price {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: var(--accent);
-  margin-top: auto;
-  padding-top: 0.4rem;
-}
-.product-source {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-}
-.product-check {
-  display: none;
+.product-card:hover { border-color: var(--text); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.product-card.in-cart { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
+.product-img { width: 100%; aspect-ratio: 1; object-fit: contain; background: var(--bg); padding: 0.5rem; }
+.product-body { padding: 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.3rem; }
+.product-name { font-size: 0.83rem; font-weight: 600; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.product-brand { font-size: 0.73rem; color: var(--text-muted); }
+.product-price { font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; color: var(--accent); margin-top: auto; padding-top: 0.4rem; }
+.product-source { font-size: 0.68rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+.cart-badge {
   position: absolute;
-  top: 0.5rem; right: 0.5rem;
-  background: var(--accent);
+  top: 0.4rem; right: 0.4rem;
+  background: var(--green);
   color: white;
   border-radius: 50%;
-  width: 22px; height: 22px;
-  font-size: 0.7rem;
+  width: 24px; height: 24px;
+  font-size: 0.75rem;
+  display: none;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
 }
-.product-card.selected .product-check { display: flex; }
-.product-card { position: relative; }
+.product-card.in-cart .cart-badge { display: flex; }
 
-/* Selected preview */
-.selected-preview {
+/* Cart panel */
+.cart-panel {
+  background: var(--surface);
+  border: 2px solid var(--text);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+  position: sticky;
+  bottom: 1.5rem;
+  z-index: 50;
+}
+.cart-header {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--accent-soft);
-  border: 2px solid var(--accent);
-  border-radius: 10px;
-  margin-top: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
-.selected-preview img {
-  width: 72px; height: 72px;
-  object-fit: contain;
-  border-radius: 6px;
-  background: #fff;
-  flex-shrink: 0;
+.cart-title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-.selected-preview-info { flex: 1; }
-.selected-preview-name { font-weight: 700; font-size: 0.9rem; }
-.selected-preview-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
-
-/* Loading & empty states */
-.state-msg {
-  text-align: center;
-  padding: 2.5rem 1rem;
+.cart-count-bubble {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+}
+.cart-items { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem; }
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+}
+.cart-item-img { width: 44px; height: 44px; object-fit: contain; border-radius: 5px; background: #fff; flex-shrink: 0; }
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-name { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cart-item-meta { font-size: 0.72rem; color: var(--text-muted); }
+.cart-item-remove {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  transition: all 0.15s;
 }
-.spinner {
-  display: inline-block;
-  width: 20px; height: 20px;
-  border: 2px solid var(--border);
-  border-top-color: var(--text);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  margin-right: 0.5rem;
-  vertical-align: middle;
-}
+.cart-item-remove:hover { border-color: #ff4d4f; color: #ff4d4f; }
+
+.cart-empty { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0; }
+
+.cart-actions { display: flex; gap: 0.75rem; align-items: center; }
+.cart-actions .btn { flex: 1; justify-content: center; }
+
+/* State messages */
+.state-msg { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); font-size: 0.9rem; }
+.spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--text); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Success screen */
-.success-screen {
-  text-align: center;
-  padding: 3rem 2rem;
-}
-.success-icon {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
+/* Add to cart button on card */
+.add-to-cart-btn {
   display: block;
-  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: calc(100% - 1.5rem);
+  margin: 0 0.75rem 0.75rem;
+  padding: 0.4rem;
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1.5px solid var(--green);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
 }
+.add-to-cart-btn:hover { background: var(--green); color: #fff; }
+.product-card.in-cart .add-to-cart-btn { background: var(--green); color: #fff; }
+
+/* Success screen */
+.success-screen { text-align: center; padding: 3rem 2rem; }
+.success-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 @keyframes pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .success-screen h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
 .success-screen p { color: var(--text-muted); }
+.success-items { margin: 1.5rem auto; max-width: 360px; text-align: left; display: flex; flex-direction: column; gap: 0.5rem; }
+.success-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.75rem; background: var(--green-soft); border: 1.5px solid #95de64; border-radius: 8px; font-size: 0.85rem; }
+.success-item img { width: 36px; height: 36px; object-fit: contain; border-radius: 4px; background: #fff; }
 {% endblock %}
 
 {% block content %}
 {% set t = {
   'ko': {
     'h1': '오늘 뭐 먹고 싶으세요? 🍫',
-    'sub': '먹고 싶은 간식이나 음료를 검색하고 정확한 제품을 선택해 주세요. 관리자가 확인 후 구매합니다.',
+    'sub': '간식이나 음료를 검색하고 장바구니에 담은 뒤 한 번에 요청하세요.',
     'step1': '01 — 이름 입력',
     'name_label': '이름',
     'name_placeholder': '홍길동',
@@ -202,59 +194,67 @@
     'search_label': '간식 / 음료 검색',
     'search_placeholder': '옥수수수염차, 프링글스, 포카리스웨트...',
     'search_btn': '검색',
-    'step3': '03 — 정확한 제품 선택',
-    'step3_hint': '원하는 제품 카드를 클릭해 선택해 주세요.',
-    'step4': '04 — 요청 확정',
-    'confirm_btn': '이 제품 요청하기',
+    'step3': '03 — 제품 선택 후 장바구니 추가',
+    'step3_hint': '원하는 제품의 [장바구니 추가] 버튼을 눌러 담으세요. 여러 개 추가 가능합니다.',
+    'add_to_cart': '+ 장바구니 추가',
+    'in_cart': '✓ 담김',
+    'cart_title': '장바구니',
+    'cart_empty': '아직 담은 제품이 없어요.',
+    'remove': '제거',
+    'submit_btn': '요청 제출하기',
     'searching': '검색 중...',
     'no_results': '결과가 없습니다. 다른 검색어를 입력해 보세요.',
     'search_first': '위에서 검색하면 결과가 여기에 표시됩니다.',
     'name_required': '이름을 먼저 입력해 주세요.',
-    'select_required': '제품을 선택해 주세요.',
+    'cart_empty_warn': '장바구니가 비어 있습니다. 제품을 추가해 주세요.',
     'success_title': '요청 완료! 🎉',
-    'success_msg': '관리자가 확인 후 구매 예정입니다. 감사합니다!',
+    'success_msg': '아래 제품들을 요청했습니다. 관리자가 확인 후 구매 예정입니다.',
     'new_request': '새 요청하기',
-    'selected': '선택된 제품',
-    'source': '출처',
-    'view_product': '제품 보기',
+    'view_product': '보기 ↗',
+    'items_label': '개 제품',
   },
   'en': {
     'h1': "What's your snack today? 🍫",
-    'sub': 'Search for a snack or drink and pick the exact product. The admin will review and purchase.',
+    'sub': 'Search for snacks or drinks, add them to your cart, then submit all at once.',
     'step1': '01 — Your Name',
     'name_label': 'Name',
     'name_placeholder': 'Jane Smith',
-    'step2': '02 — Search for a Product',
+    'step2': '02 — Search for Products',
     'search_label': 'Snack / Drink Search',
     'search_placeholder': 'Corn Silk Tea, Pringles, Pocari Sweat...',
     'search_btn': 'Search',
-    'step3': '03 — Pick the Exact Product',
-    'step3_hint': 'Click a product card to select it.',
-    'step4': '04 — Confirm Request',
-    'confirm_btn': 'Request This Product',
+    'step3': '03 — Add Products to Cart',
+    'step3_hint': 'Click [Add to Cart] on any product. You can add multiple items.',
+    'add_to_cart': '+ Add to Cart',
+    'in_cart': '✓ Added',
+    'cart_title': 'Cart',
+    'cart_empty': 'Your cart is empty.',
+    'remove': 'Remove',
+    'submit_btn': 'Submit Request',
     'searching': 'Searching...',
     'no_results': 'No results found. Try a different search term.',
     'search_first': 'Search above and results will appear here.',
     'name_required': 'Please enter your name first.',
-    'select_required': 'Please select a product.',
+    'cart_empty_warn': 'Your cart is empty. Add at least one product.',
     'success_title': 'Request Submitted! 🎉',
-    'success_msg': 'The admin will review and purchase it soon. Thank you!',
+    'success_msg': 'The following items have been requested. The admin will review and purchase them.',
     'new_request': 'New Request',
-    'selected': 'Selected Product',
-    'source': 'Source',
-    'view_product': 'View Product',
+    'view_product': 'View ↗',
+    'items_label': ' items',
   }
 } %}
 {% set tx = t[lang] %}
 
 <div class="container">
-  <!-- Success screen (hidden by default) -->
-  <div id="successScreen" class="success-screen" style="display:none;">
-    <span class="success-icon">🎉</span>
-    <h2 id="successTitle">{{ tx.success_title }}</h2>
-    <p id="successMsg">{{ tx.success_msg }}</p>
-    <br>
-    <button class="btn btn-primary" onclick="resetForm()">{{ tx.new_request }}</button>
+  <!-- Success screen -->
+  <div id="successScreen" style="display:none;">
+    <div class="success-screen">
+      <span class="success-icon">🎉</span>
+      <h2>{{ tx.success_title }}</h2>
+      <p>{{ tx.success_msg }}</p>
+      <div class="success-items" id="successItems"></div>
+      <button class="btn btn-primary" onclick="resetForm()">{{ tx.new_request }}</button>
+    </div>
   </div>
 
   <!-- Main form -->
@@ -283,9 +283,7 @@
           <input class="form-input" id="searchInput" type="text"
                  placeholder="{{ tx.search_placeholder }}"
                  onkeydown="if(event.key==='Enter') doSearch()">
-          <button class="btn btn-primary" onclick="doSearch()" id="searchBtn">
-            {{ tx.search_btn }}
-          </button>
+          <button class="btn btn-primary" onclick="doSearch()">{{ tx.search_btn }}</button>
         </div>
       </div>
     </div>
@@ -293,20 +291,28 @@
     <!-- Step 3: Results -->
     <div class="step-card">
       <div class="step-num">{{ tx.step3 }}</div>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">{{ tx.step3_hint }}</p>
+      <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:0.5rem;">{{ tx.step3_hint }}</p>
       <div id="resultsArea">
         <div class="state-msg">{{ tx.search_first }}</div>
       </div>
     </div>
 
-    <!-- Step 4: Confirm -->
-    <div class="step-card" id="confirmSection" style="display:none;">
-      <div class="step-num">{{ tx.step4 }}</div>
-      <div id="selectedPreview"></div>
-      <br>
-      <button class="btn btn-accent" style="width:100%;" onclick="submitRequest()" id="confirmBtn">
-        {{ tx.confirm_btn }}
-      </button>
+    <!-- Cart (sticky) -->
+    <div class="cart-panel" id="cartPanel">
+      <div class="cart-header">
+        <div class="cart-title">
+          🛒 {{ tx.cart_title }}
+          <span class="cart-count-bubble" id="cartCountBubble">0</span>
+        </div>
+      </div>
+      <div id="cartItems">
+        <div class="cart-empty">{{ tx.cart_empty }}</div>
+      </div>
+      <div class="cart-actions">
+        <button class="btn btn-accent" onclick="submitRequest()" id="submitBtn">
+          {{ tx.submit_btn }}
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -316,7 +322,18 @@ const LANG = "{{ lang }}";
 const TX = {{ t | tojson }};
 const tx = TX[LANG];
 
-let selectedProduct = null;
+// cart = array of {search_term, product}
+let cart = [];
+let currentSearchTerm = "";
+
+function getCartKey(product) {
+  return product.product_name + product.price;
+}
+
+function isInCart(product) {
+  const key = getCartKey(product);
+  return cart.some(i => getCartKey(i.product) === key);
+}
 
 async function doSearch() {
   const name = document.getElementById('nameInput').value.trim();
@@ -324,10 +341,9 @@ async function doSearch() {
   if (!name) { alert(tx.name_required); return; }
   if (!query) return;
 
+  currentSearchTerm = query;
   const resultsArea = document.getElementById('resultsArea');
   resultsArea.innerHTML = `<div class="state-msg"><span class="spinner"></span>${tx.searching}</div>`;
-  document.getElementById('confirmSection').style.display = 'none';
-  selectedProduct = null;
 
   try {
     const resp = await fetch(`/search?q=${encodeURIComponent(query)}&lang=${LANG}`);
@@ -340,21 +356,27 @@ async function doSearch() {
 
     const grid = document.createElement('div');
     grid.className = 'product-grid';
-    products.forEach((p, i) => {
+    products.forEach(p => {
+      const inCart = isInCart(p);
       const card = document.createElement('div');
-      card.className = 'product-card';
-      card.dataset.idx = i;
+      card.className = 'product-card' + (inCart ? ' in-cart' : '');
+      card.dataset.key = getCartKey(p);
       card.innerHTML = `
-        <div class="product-check">✓</div>
-        <img class="product-img" src="${p.image_url || 'https://placehold.co/200x200/f7f6f2/7a7670?text=No+Image'}"
-             alt="${p.product_name}" onerror="this.src='https://placehold.co/200x200/f7f6f2/7a7670?text=No+Image'">
+        <div class="cart-badge">✓</div>
+        <img class="product-img"
+             src="${p.image_url || 'https://placehold.co/200x200/f7f6f2/7a7670?text=No+Image'}"
+             alt="${p.product_name}"
+             onerror="this.src='https://placehold.co/200x200/f7f6f2/7a7670?text=No+Image'">
         <div class="product-body">
           <div class="product-name">${p.product_name}</div>
           ${p.brand ? `<div class="product-brand">${p.brand}</div>` : ''}
           ${p.price ? `<div class="product-price">${p.price}</div>` : ''}
           <div class="product-source">${p.source || ''}</div>
-        </div>`;
-      card.addEventListener('click', () => selectProduct(p, card));
+        </div>
+        <button class="add-to-cart-btn" onclick="toggleCart(event, this)">
+          ${inCart ? tx.in_cart : tx.add_to_cart}
+        </button>`;
+      card._product = p;
       grid.appendChild(card);
     });
     resultsArea.innerHTML = '';
@@ -364,50 +386,99 @@ async function doSearch() {
   }
 }
 
-function selectProduct(product, cardEl) {
-  document.querySelectorAll('.product-card').forEach(c => c.classList.remove('selected'));
-  cardEl.classList.add('selected');
-  selectedProduct = product;
+function toggleCart(event, btn) {
+  event.stopPropagation();
+  const card = btn.closest('.product-card');
+  const product = card._product;
+  const key = getCartKey(product);
+  const idx = cart.findIndex(i => getCartKey(i.product) === key);
 
-  const preview = document.getElementById('selectedPreview');
-  preview.innerHTML = `
-    <div class="selected-preview">
-      <img src="${product.image_url || ''}" alt="${product.product_name}"
-           onerror="this.style.display='none'">
-      <div class="selected-preview-info">
-        <div class="selected-preview-name">${product.product_name}</div>
-        <div class="selected-preview-meta">
-          ${product.brand ? product.brand + ' · ' : ''}
-          ${product.price || ''}
-        </div>
-        ${product.product_url && product.product_url !== '#'
-          ? `<a href="${product.product_url}" target="_blank" class="btn btn-ghost" style="margin-top:0.6rem; font-size:0.8rem; padding:0.3rem 0.8rem;">
-              ${tx.view_product} ↗
-             </a>`
-          : ''}
+  if (idx === -1) {
+    cart.push({ search_term: currentSearchTerm, product });
+    card.classList.add('in-cart');
+    btn.textContent = tx.in_cart;
+  } else {
+    cart.splice(idx, 1);
+    card.classList.remove('in-cart');
+    btn.textContent = tx.add_to_cart;
+  }
+  renderCart();
+}
+
+function removeFromCart(key) {
+  cart = cart.filter(i => getCartKey(i.product) !== key);
+  // Update any card in results that matches
+  document.querySelectorAll('.product-card').forEach(card => {
+    if (card.dataset.key === key) {
+      card.classList.remove('in-cart');
+      const btn = card.querySelector('.add-to-cart-btn');
+      if (btn) btn.textContent = tx.add_to_cart;
+    }
+  });
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const bubble = document.getElementById('cartCountBubble');
+  bubble.textContent = cart.length;
+
+  if (!cart.length) {
+    container.innerHTML = `<div class="cart-empty">${tx.cart_empty}</div>`;
+    return;
+  }
+
+  container.innerHTML = '';
+  const list = document.createElement('div');
+  list.className = 'cart-items';
+  cart.forEach(item => {
+    const p = item.product;
+    const key = getCartKey(p);
+    const el = document.createElement('div');
+    el.className = 'cart-item';
+    el.innerHTML = `
+      <img class="cart-item-img"
+           src="${p.image_url || 'https://placehold.co/44x44/f7f6f2/7a7670?text=?'}"
+           onerror="this.src='https://placehold.co/44x44/f7f6f2/7a7670?text=?'">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.product_name}</div>
+        <div class="cart-item-meta">${p.brand ? p.brand + ' · ' : ''}${p.price || ''}</div>
       </div>
-    </div>`;
-  document.getElementById('confirmSection').style.display = 'block';
-  document.getElementById('confirmSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      <button class="cart-item-remove" onclick="removeFromCart('${key.replace(/'/g, "\\'")}')">✕</button>`;
+    list.appendChild(el);
+  });
+  container.appendChild(list);
 }
 
 async function submitRequest() {
-  if (!selectedProduct) { alert(tx.select_required); return; }
   const name = document.getElementById('nameInput').value.trim();
-  const searchTerm = document.getElementById('searchInput').value.trim();
   if (!name) { alert(tx.name_required); return; }
+  if (!cart.length) { alert(tx.cart_empty_warn); return; }
 
-  const btn = document.getElementById('confirmBtn');
+  const btn = document.getElementById('submitBtn');
   btn.disabled = true;
 
   try {
     const resp = await fetch('/confirm', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, search_term: searchTerm, product: selectedProduct })
+      body: JSON.stringify({ name, items: cart })
     });
     const data = await resp.json();
     if (data.ok) {
+      // Build success item list
+      const successItems = document.getElementById('successItems');
+      successItems.innerHTML = cart.map(item => {
+        const p = item.product;
+        return `<div class="success-item">
+          <img src="${p.image_url || ''}" onerror="this.style.display='none'">
+          <div>
+            <div style="font-weight:600;font-size:0.83rem;">${p.product_name}</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);">${p.price || ''}</div>
+          </div>
+        </div>`;
+      }).join('');
+
       document.getElementById('mainForm').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -421,14 +492,18 @@ async function submitRequest() {
 }
 
 function resetForm() {
+  cart = [];
+  currentSearchTerm = "";
   document.getElementById('mainForm').style.display = 'block';
   document.getElementById('successScreen').style.display = 'none';
   document.getElementById('nameInput').value = '';
   document.getElementById('searchInput').value = '';
   document.getElementById('resultsArea').innerHTML = `<div class="state-msg">${tx.search_first}</div>`;
-  document.getElementById('confirmSection').style.display = 'none';
-  selectedProduct = null;
+  renderCart();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Init cart display
+renderCart();
 </script>
 {% endblock %}
