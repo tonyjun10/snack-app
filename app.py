@@ -1,6 +1,4 @@
 import os
-import csv
-import json
 import sqlite3
 import requests
 from datetime import datetime
@@ -31,13 +29,11 @@ def get_db():
         db.row_factory = sqlite3.Row
     return db
 
-
 @app.teardown_appcontext
 def close_db(exception):
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()
-
 
 def init_db():
     with app.app_context():
@@ -72,32 +68,23 @@ def admin_required(f):
 
 # ─── Product Search ───────────────────────────────────────────────────────────
 
-def search_products(query: str, lang: str = "ko") -> list[dict]:
-    """Search products via Naver Shopping API."""
+def search_products(query, lang="ko"):
     if not NAVER_CLIENT_ID or not NAVER_CLIENT_SECRET:
         return _demo_products(query)
-
     try:
         headers = {
             "X-Naver-Client-Id": NAVER_CLIENT_ID,
             "X-Naver-Client-Secret": NAVER_CLIENT_SECRET,
         }
-        params = {
-            "query": query,
-            "display": 12,
-            "sort": "sim",  # sort by relevance
-        }
         resp = requests.get(
             "https://openapi.naver.com/v1/search/shop.json",
             headers=headers,
-            params=params,
+            params={"query": query, "display": 12, "sort": "sim"},
             timeout=10,
         )
         data = resp.json()
-
         results = []
         for item in data.get("items", []):
-            # Strip Naver's bold tags from titles
             name = item.get("title", "").replace("<b>", "").replace("</b>", "")
             price_raw = item.get("lprice", "")
             price = f"₩{int(price_raw):,}" if price_raw else ""
@@ -115,35 +102,15 @@ def search_products(query: str, lang: str = "ko") -> list[dict]:
         return _demo_products(query)
 
 
-def _demo_products(query: str) -> list[dict]:
-    """Fallback demo products when API key is missing."""
-    demo = [
-        {
-            "product_name": f"{query} - 샘플 제품 A (500ml)",
-            "brand": "데모 브랜드",
-            "price": "₩1,500",
-            "image_url": "https://placehold.co/200x200/f0f4ff/6366f1?text=🧃",
-            "product_url": "#",
-            "source": "데모 (API 키 없음)",
-        },
-        {
-            "product_name": f"{query} - 샘플 제품 B (340ml × 6캔)",
-            "brand": "데모 브랜드 B",
-            "price": "₩8,900",
-            "image_url": "https://placehold.co/200x200/f0f4ff/6366f1?text=🥤",
-            "product_url": "#",
-            "source": "데모 (API 키 없음)",
-        },
-        {
-            "product_name": f"{query} - 샘플 제품 C (대용량 1L)",
-            "brand": "데모 브랜드 C",
-            "price": "₩2,200",
-            "image_url": "https://placehold.co/200x200/f0f4ff/6366f1?text=🫙",
-            "product_url": "#",
-            "source": "데모 (API 키 없음)",
-        },
+def _demo_products(query):
+    return [
+        {"product_name": f"{query} - 샘플 제품 A (500ml)", "brand": "데모 브랜드", "price": "₩1,500",
+         "image_url": "https://placehold.co/200x200/f0f4ff/6366f1?text=🧃", "product_url": "#", "source": "데모"},
+        {"product_name": f"{query} - 샘플 제품 B (340ml × 6캔)", "brand": "데모 브랜드 B", "price": "₩8,900",
+         "image_url": "https://placehold.co/200x200/f0f4ff/6366f1?text=🥤", "product_url": "#", "source": "데모"},
+        {"product_name": f"{query} - 샘플 제품 C (대용량 1L)", "brand": "데모 브랜드 C", "price": "₩2,200",
+         "image_url": "https://placehold.co/200x200/f0f4ff/6366f1?text=🫙", "product_url": "#", "source": "데모"},
     ]
-    return demo
 
 
 # ─── Routes: User ─────────────────────────────────────────────────────────────
@@ -154,49 +121,50 @@ def index():
     session["lang"] = lang
     return render_template("index.html", lang=lang)
 
-
 @app.route("/search")
 def search():
     query = request.args.get("q", "").strip()
     lang = session.get("lang", "ko")
     if not query:
         return jsonify([])
-    results = search_products(query, lang)
-    return jsonify(results)
-
+    return jsonify(search_products(query, lang))
 
 @app.route("/confirm", methods=["POST"])
 def confirm():
-    lang = session.get("lang", "ko")
     data = request.get_json()
-
     name = data.get("name", "").strip()
-    search_term = data.get("search_term", "").strip()
-    product = data.get("product", {})
+    items = data.get("items", [])  # list of {search_term, product}
 
-    if not name or not product.get("product_name"):
+    if not name or not items:
         return jsonify({"ok": False, "error": "missing fields"}), 400
 
     db = get_db()
-    db.execute(
-        """INSERT INTO snack_requests
-           (requester_name, search_term, product_name, brand, price,
-            image_url, product_url, source, timestamp)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        (
-            name,
-            search_term,
-            product.get("product_name", ""),
-            product.get("brand", ""),
-            product.get("price", ""),
-            product.get("image_url", ""),
-            product.get("product_url", ""),
-            product.get("source", ""),
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        ),
-    )
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    saved = 0
+    for item in items:
+        product = item.get("product", {})
+        if not product.get("product_name"):
+            continue
+        db.execute(
+            """INSERT INTO snack_requests
+               (requester_name, search_term, product_name, brand, price,
+                image_url, product_url, source, timestamp)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                name,
+                item.get("search_term", ""),
+                product.get("product_name", ""),
+                product.get("brand", ""),
+                product.get("price", ""),
+                product.get("image_url", ""),
+                product.get("product_url", ""),
+                product.get("source", ""),
+                ts,
+            ),
+        )
+        saved += 1
     db.commit()
-    return jsonify({"ok": True})
+    return jsonify({"ok": True, "count": saved})
 
 
 # ─── Routes: Admin ────────────────────────────────────────────────────────────
@@ -211,46 +179,31 @@ def admin_login():
         error = "비밀번호가 틀렸습니다. / Wrong password."
     return render_template("admin_login.html", error=error)
 
-
 @app.route("/admin/logout")
 def admin_logout():
     session.pop("admin_logged_in", None)
     return redirect(url_for("admin_login"))
 
-
 @app.route("/admin")
 @admin_required
 def admin_dashboard():
     db = get_db()
-    rows = db.execute(
-        "SELECT * FROM snack_requests ORDER BY timestamp DESC"
-    ).fetchall()
+    rows = db.execute("SELECT * FROM snack_requests ORDER BY timestamp DESC").fetchall()
     return render_template("admin.html", rows=rows)
-
 
 @app.route("/admin/export")
 @admin_required
 def admin_export():
     db = get_db()
-    rows = db.execute(
-        "SELECT * FROM snack_requests ORDER BY timestamp DESC"
-    ).fetchall()
-
+    rows = db.execute("SELECT * FROM snack_requests ORDER BY timestamp DESC").fetchall()
     def generate():
         cols = ["id", "requester_name", "search_term", "product_name",
                 "brand", "price", "image_url", "product_url", "source", "timestamp"]
         yield ",".join(cols) + "\n"
         for row in rows:
-            yield ",".join(
-                f'"{str(row[c]).replace(chr(34), chr(39))}"' for c in cols
-            ) + "\n"
-
-    return Response(
-        generate(),
-        mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=snack_requests.csv"},
-    )
-
+            yield ",".join(f'"{str(row[c]).replace(chr(34), chr(39))}"' for c in cols) + "\n"
+    return Response(generate(), mimetype="text/csv",
+                    headers={"Content-Disposition": "attachment; filename=snack_requests.csv"})
 
 @app.route("/admin/delete/<int:req_id>", methods=["POST"])
 @admin_required
