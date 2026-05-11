@@ -2,7 +2,7 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "python -c 'from app import init_db; init_db()' && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60"
+startCommand = "python -c \"import sqlite3,os; db=sqlite3.connect(os.environ.get('DATABASE_PATH','requests.db')); [db.execute('ALTER TABLE snack_requests ADD COLUMN comment TEXT') for _ in [1] if 'comment' not in [i[1] for i in db.execute('PRAGMA table_info(snack_requests)').fetchall()]]; db.commit()\" && python -c 'from app import init_db; init_db()' && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60"
 healthcheckPath = "/"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
