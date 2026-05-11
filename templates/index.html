@@ -472,11 +472,11 @@ async function submitRequest() {
   btn.disabled = true;
 
   try {
+    const comment = document.getElementById('commentInput').value.trim();
     const resp = await fetch('/confirm', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      const comment = document.getElementById('commentInput').value.trim();
-    body: JSON.stringify({ name, comment, items: cart })
+      body: JSON.stringify({ name, comment, items: cart })
     });
     const data = await resp.json();
     if (data.ok) {
