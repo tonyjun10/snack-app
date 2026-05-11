@@ -49,6 +49,7 @@ def init_db():
                 image_url TEXT,
                 product_url TEXT,
                 source TEXT,
+                comment TEXT,
                 timestamp TEXT NOT NULL
             )
         """)
@@ -133,6 +134,7 @@ def search():
 def confirm():
     data = request.get_json()
     name = data.get("name", "").strip()
+    comment = data.get("comment", "").strip()  # shared comment for whole request
     items = data.get("items", [])  # list of {search_term, product}
 
     if not name or not items:
@@ -148,8 +150,8 @@ def confirm():
         db.execute(
             """INSERT INTO snack_requests
                (requester_name, search_term, product_name, brand, price,
-                image_url, product_url, source, timestamp)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                image_url, product_url, source, comment, timestamp)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 name,
                 item.get("search_term", ""),
@@ -159,6 +161,7 @@ def confirm():
                 product.get("image_url", ""),
                 product.get("product_url", ""),
                 product.get("source", ""),
+                comment,
                 ts,
             ),
         )
@@ -198,7 +201,7 @@ def admin_export():
     rows = db.execute("SELECT * FROM snack_requests ORDER BY timestamp DESC").fetchall()
     def generate():
         cols = ["id", "requester_name", "search_term", "product_name",
-                "brand", "price", "image_url", "product_url", "source", "timestamp"]
+                "brand", "price", "image_url", "product_url", "source", "comment", "timestamp"]
         yield ",".join(cols) + "\n"
         for row in rows:
             yield ",".join(f'"{str(row[c]).replace(chr(34), chr(39))}"' for c in cols) + "\n"
