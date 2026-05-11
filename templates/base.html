@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="{{ 'ko' if lang == 'ko' else 'en' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ '🍿 사무실 간식 요청' if lang == 'ko' else '🍿 Office Snack Request' }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --border: #e5e2d9;
+      --accent: #ff5c35;
+      --accent-soft: #fff1ee;
+      --text: #1a1814;
+      --text-muted: #7a7670;
+      --green: #2db67d;
+      --green-soft: #edfaf4;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+      --radius: 14px;
+      --font-body: 'Noto Sans KR', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--text);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-logo {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .site-logo .dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .lang-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      font-size: 0.8rem;
+    }
+    .lang-toggle a {
+      padding: 0.3rem 0.8rem;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+    .lang-toggle a.active {
+      background: var(--text);
+      color: #fff;
+      border-radius: 999px;
+    }
+    .admin-link {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      padding: 0.3rem 0.7rem;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .admin-link:hover { border-color: var(--text); color: var(--text); }
+
+    /* Main container */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      border: 2px solid var(--text);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .btn-primary {
+      background: var(--text);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+    .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-accent:hover { background: #e04020; border-color: #e04020; }
+    .btn-ghost { border-color: var(--border); color: var(--text-muted); }
+    .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    /* Form elements */
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .form-input {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--text); background: var(--surface); }
+
+    /* Flash / alerts */
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      border: 2px solid;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .alert-error { background: #fff1f0; border-color: #ffa39e; color: #cf1322; }
+    .alert-success { background: var(--green-soft); border-color: #95de64; color: #237804; }
+
+    {% block extra_css %}{% endblock %}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="{{ url_for('index', lang=lang) }}" class="site-logo">
+      <span class="dot"></span>
+      {{ '사무실 간식 요청' if lang == 'ko' else 'Office Snacks' }}
+    </a>
+    <div class="header-right">
+      <div class="lang-toggle">
+        <a href="?lang=ko" class="{{ 'active' if lang == 'ko' }}">한국어</a>
+        <a href="?lang=en" class="{{ 'active' if lang == 'en' }}">EN</a>
+      </div>
+      <a href="{{ url_for('admin_login') }}" class="admin-link">관리자 / Admin</a>
+    </div>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

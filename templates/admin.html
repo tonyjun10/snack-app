@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 대시보드 / Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f6f2; --surface: #fff; --border: #e5e2d9;
+      --accent: #ff5c35; --accent-soft: #fff1ee;
+      --text: #1a1814; --text-muted: #7a7670;
+      --green: #2db67d; --green-soft: #edfaf4;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* Header */
+    .admin-header {
+      background: var(--text);
+      color: #fff;
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .admin-header-left {
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .admin-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .admin-header h1 { font-size: 1rem; font-weight: 700; }
+    .header-actions { display: flex; gap: 0.75rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      border: 1.5px solid;
+      font-family: inherit;
+      font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.15s;
+    }
+    .btn-export { background: var(--green); color: #fff; border-color: var(--green); }
+    .btn-export:hover { background: #25a06d; }
+    .btn-logout { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
+    .btn-logout:hover { border-color: #fff; }
+
+    /* Container */
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      flex: 1;
+      min-width: 140px;
+    }
+    .stat-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-family: 'Space Mono', monospace; margin-bottom: 0.3rem; }
+    .stat-value { font-size: 2rem; font-weight: 700; font-family: 'Space Mono', monospace; }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .search-filter {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.6rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--surface);
+      outline: none;
+    }
+    .search-filter:focus { border-color: var(--text); }
+
+    /* Table */
+    .table-wrap {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--text); color: #fff; }
+    th {
+      padding: 0.9rem 1rem;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: 'Space Mono', monospace;
+      white-space: nowrap;
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      font-size: 0.88rem;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafaf8; }
+
+    /* Product cell */
+    .product-cell { display: flex; align-items: center; gap: 0.75rem; }
+    .product-thumb {
+      width: 52px; height: 52px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .product-cell-info { display: flex; flex-direction: column; gap: 0.15rem; }
+    .product-cell-name { font-weight: 600; font-size: 0.85rem; line-height: 1.3; }
+    .product-cell-brand { font-size: 0.75rem; color: var(--text-muted); }
+    .product-cell-price { font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 700; }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+    }
+    .tag-source { background: #f0f4ff; color: #2f54eb; }
+
+    .link-btn {
+      display: inline-flex; align-items: center; gap: 0.2rem;
+      font-size: 0.75rem; color: var(--accent);
+      text-decoration: none; font-weight: 600;
+    }
+    .link-btn:hover { text-decoration: underline; }
+
+    .timestamp { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
+
+    .del-btn {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      transition: all 0.15s;
+    }
+    .del-btn:hover { border-color: #ff4d4f; color: #ff4d4f; }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+  </style>
+</head>
+<body>
+<header class="admin-header">
+  <div class="admin-header-left">
+    <span class="admin-badge">ADMIN</span>
+    <h1>간식 요청 관리 · Snack Request Dashboard</h1>
+  </div>
+  <div class="header-actions">
+    <a href="/admin/export" class="btn btn-export">⬇ CSV 내보내기 / Export</a>
+    <a href="/admin/logout" class="btn btn-logout">로그아웃 / Logout</a>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">총 요청 / Total Requests</div>
+      <div class="stat-value">{{ rows|length }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">요청자 수 / Unique Requesters</div>
+      <div class="stat-value">{{ rows|map(attribute='requester_name')|list|unique|list|length }}</div>
+    </div>
+    {% if rows %}
+    <div class="stat-card">
+      <div class="stat-label">최근 요청 / Latest</div>
+      <div class="stat-value" style="font-size:1rem; padding-top:0.4rem;">{{ rows[0]['timestamp'][:10] }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <input class="search-filter" type="text" id="filterInput"
+           placeholder="이름, 제품명 검색... / Filter by name or product..."
+           oninput="filterTable()">
+    <a href="/admin/export" class="btn btn-export" style="white-space:nowrap;">
+      ⬇ CSV
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    {% if rows %}
+    <table id="requestTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>요청자 / Name</th>
+          <th>검색어 / Search Term</th>
+          <th>제품 / Product</th>
+          <th>출처 / Source</th>
+          <th>링크 / Link</th>
+          <th>시간 / Time</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td><span style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--text-muted);">{{ row['id'] }}</span></td>
+          <td><strong>{{ row['requester_name'] }}</strong></td>
+          <td style="color:var(--text-muted);font-size:0.82rem;">{{ row['search_term'] }}</td>
+          <td>
+            <div class="product-cell">
+              {% if row['image_url'] %}
+              <img class="product-thumb" src="{{ row['image_url'] }}"
+                   alt="{{ row['product_name'] }}"
+                   onerror="this.style.display='none'">
+              {% endif %}
+              <div class="product-cell-info">
+                <div class="product-cell-name">{{ row['product_name'] }}</div>
+                {% if row['brand'] %}
+                <div class="product-cell-brand">{{ row['brand'] }}</div>
+                {% endif %}
+                {% if row['price'] %}
+                <div class="product-cell-price">{{ row['price'] }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </td>
+          <td>{% if row['source'] %}<span class="tag tag-source">{{ row['source'] }}</span>{% endif %}</td>
+          <td>
+            {% if row['product_url'] and row['product_url'] != '#' %}
+            <a class="link-btn" href="{{ row['product_url'] }}" target="_blank">보기 ↗</a>
+            {% else %}
+            <span style="color:var(--text-muted);font-size:0.75rem;">—</span>
+            {% endif %}
+          </td>
+          <td><span class="timestamp">{{ row['timestamp'] }}</span></td>
+          <td>
+            <form method="POST" action="/admin/delete/{{ row['id'] }}"
+                  onsubmit="return confirm('삭제하시겠습니까? / Delete this request?')">
+              <button type="submit" class="del-btn">삭제</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <p>아직 요청이 없습니다. / No requests yet.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function filterTable() {
+  const q = document.getElementById('filterInput').value.toLowerCase();
+  document.querySelectorAll('#requestTable tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
