@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{{ '🍿 사무실 간식 요청' if lang == 'ko' else '🍿 Office Snack Request' }}{% endblock %}</title>
+  <title>{% block title %}{{ '🗂️ 사무실 용품 요청' if lang == 'ko' else '🗂️ Office Request' }}{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -186,7 +186,7 @@
   <header class="site-header">
     <a href="{{ url_for('index', lang=lang) }}" class="site-logo">
       <span class="dot"></span>
-      {{ '사무실 간식 요청' if lang == 'ko' else 'Office Snacks' }}
+      {{ '사무실 용품 요청' if lang == 'ko' else 'Office Supplies' }}
     </a>
     <div class="header-right">
       <div class="lang-toggle">
