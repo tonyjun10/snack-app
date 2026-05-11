@@ -18,7 +18,8 @@ app.secret_key = os.environ.get("SECRET_KEY", "change-me-in-production")
 
 DATABASE = os.environ.get("DATABASE_PATH", "requests.db")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
-SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "")
+NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID", "")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "")
 
 
 # ─── Database ────────────────────────────────────────────────────────────────
@@ -72,36 +73,45 @@ def admin_required(f):
 # ─── Product Search ───────────────────────────────────────────────────────────
 
 def search_products(query: str, lang: str = "ko") -> list[dict]:
-    """Search products via SerpAPI Google Shopping."""
-    if not SERPAPI_KEY:
-        # Return demo data when no API key is set
+    """Search products via Naver Shopping API."""
+    if not NAVER_CLIENT_ID or not NAVER_CLIENT_SECRET:
         return _demo_products(query)
 
     try:
-        params = {
-            "engine": "google_shopping",
-            "q": query,
-            "api_key": SERPAPI_KEY,
-            "hl": "ko" if lang == "ko" else "en",
-            "gl": "kr",
-            "num": 12,
+        headers = {
+            "X-Naver-Client-Id": NAVER_CLIENT_ID,
+            "X-Naver-Client-Secret": NAVER_CLIENT_SECRET,
         }
-        resp = requests.get("https://serpapi.com/search", params=params, timeout=10)
+        params = {
+            "query": query,
+            "display": 12,
+            "sort": "sim",  # sort by relevance
+        }
+        resp = requests.get(
+            "https://openapi.naver.com/v1/search/shop.json",
+            headers=headers,
+            params=params,
+            timeout=10,
+        )
         data = resp.json()
 
         results = []
-        for item in data.get("shopping_results", [])[:12]:
+        for item in data.get("items", []):
+            # Strip Naver's bold tags from titles
+            name = item.get("title", "").replace("<b>", "").replace("</b>", "")
+            price_raw = item.get("lprice", "")
+            price = f"₩{int(price_raw):,}" if price_raw else ""
             results.append({
-                "product_name": item.get("title", ""),
-                "brand": item.get("source", ""),
-                "price": item.get("price", ""),
-                "image_url": item.get("thumbnail", ""),
+                "product_name": name,
+                "brand": item.get("brand", "") or item.get("maker", ""),
+                "price": price,
+                "image_url": item.get("image", ""),
                 "product_url": item.get("link", ""),
-                "source": "Google Shopping",
+                "source": "Naver Shopping",
             })
         return results
     except Exception as e:
-        print(f"Search error: {e}")
+        print(f"Naver search error: {e}")
         return _demo_products(query)
 
 
