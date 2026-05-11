@@ -236,6 +236,7 @@
           <th>제품 / Product</th>
           <th>출처 / Source</th>
           <th>링크 / Link</th>
+          <th>비고 / Notes</th>
           <th>시간 / Time</th>
           <th></th>
         </tr>
@@ -268,6 +269,15 @@
           <td>
             {% if row['product_url'] and row['product_url'] != '#' %}
             <a class="link-btn" href="{{ row['product_url'] }}" target="_blank">보기 ↗</a>
+            {% else %}
+            <span style="color:var(--text-muted);font-size:0.75rem;">—</span>
+            {% endif %}
+          </td>
+          <td style="max-width:200px;">
+            {% if row['comment'] %}
+            <span style="font-size:0.82rem;background:#fffbe6;border:1.5px solid #ffe58f;color:#874d00;padding:0.25rem 0.6rem;border-radius:6px;display:inline-block;line-height:1.4;">
+              {{ row['comment'] }}
+            </span>
             {% else %}
             <span style="color:var(--text-muted);font-size:0.75rem;">—</span>
             {% endif %}
