@@ -212,6 +212,8 @@
     'new_request': '새 요청하기',
     'view_product': '보기 ↗',
     'items_label': '개 제품',
+    'comment_label': '비고 (선택사항)',
+    'comment_placeholder': '긴급도나 요청 이유를 적어주세요. 예) 긴급, 이번 주 안으로 필요합니다 / 매달 2회 정기 주문',
   },
   'en': {
     'h1': "Need something today? 📦",
@@ -241,6 +243,8 @@
     'new_request': 'New Request',
     'view_product': 'View ↗',
     'items_label': ' items',
+    'comment_label': 'Notes (optional)',
+    'comment_placeholder': 'Add urgency or context. e.g. Urgent, needed by Friday / Regular monthly order',
   }
 } %}
 {% set tx = t[lang] %}
@@ -307,6 +311,17 @@
       </div>
       <div id="cartItems">
         <div class="cart-empty">{{ tx.cart_empty }}</div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label class="form-label" for="commentInput" style="display:block;margin-bottom:0.4rem;">
+          {{ tx.comment_label }}
+        </label>
+        <textarea
+          id="commentInput"
+          class="form-input"
+          rows="2"
+          placeholder="{{ tx.comment_placeholder }}"
+          style="resize:vertical;min-height:60px;font-size:0.88rem;"></textarea>
       </div>
       <div class="cart-actions">
         <button class="btn btn-accent" onclick="submitRequest()" id="submitBtn">
@@ -462,7 +477,8 @@ async function submitRequest() {
     const resp = await fetch('/confirm', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, items: cart })
+      const comment = document.getElementById('commentInput').value.trim();
+    body: JSON.stringify({ name, comment, items: cart })
     });
     const data = await resp.json();
     if (data.ok) {
@@ -497,6 +513,7 @@ function resetForm() {
   document.getElementById('mainForm').style.display = 'block';
   document.getElementById('successScreen').style.display = 'none';
   document.getElementById('nameInput').value = '';
+  document.getElementById('commentInput').value = '';
   document.getElementById('searchInput').value = '';
   document.getElementById('resultsArea').innerHTML = `<div class="state-msg">${tx.search_first}</div>`;
   renderCart();
